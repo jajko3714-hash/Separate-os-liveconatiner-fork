@@ -1,0 +1,9 @@
+{
+  "appId": "com.yourname.customlauncher",
+  "appName": "Sepos",
+  "webDir": ".",
+  "server": {
+    "url": "https://github.io",
+    "allowNavigation": ["*"]
+  }
+}
