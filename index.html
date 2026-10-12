@@ -7,8 +7,8 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; user-select: none; }
     body { background: #0f0f11; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-    .iphone-screen { width: 393px; height: 852px; background: url('https://unsplash.com') no-repeat center/cover; border-radius: 54px; position: relative; box-shadow: 0 25px 60px rgba(0,0,0,0.8); overflow: hidden; display: flex; flex-direction: column; }
-    .iphone-screen::before { content: ''; position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 110px; height: 30px; background: #000; border-radius: 20px; z-index: 10; }
+    .iphone-screen { width: 393px; height: 852px; background: url('https://unsplash.com') no-repeat center/cover; border-radius: 54px; position: relative; box-shadow: 0 25px 60px rgba(0,0,0,0.8); overflow: hidden; display: flex; flex-direction: column; transition: background-image 0.4s ease; }
+    .iphone-screen::before { content: ''; position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 110px; height: 30px; background: #000; border-radius: 20px; z-index: 15; }
     .status-bar { height: 48px; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 34px 6px 34px; color: #fff; font-weight: 500; font-size: 15px; z-index: 5; }
     .screen-slider-viewport { width: 100%; flex-grow: 1; overflow: hidden; position: relative; }
     .pages-container { display: flex; width: 200%; height: 100%; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
@@ -18,6 +18,7 @@
     .icon-safari { background: linear-gradient(180deg, #fff, #f2f2f7); display: flex; justify-content: center; align-items: center; }
     .safari-compass { width: 40px; height: 40px; background: radial-gradient(circle, #007aff, #0051a8); border-radius: 50%; position: relative; }
     .icon-appstore { background: linear-gradient(180deg, #34aadc, #007aff); display: flex; justify-content: center; align-items: center; color: #fff; font-size: 32px; font-weight: 300; }
+    .icon-settings { background: linear-gradient(180deg, #a2a2a2, #636366); display: flex; justify-content: center; align-items: center; color: #fff; font-size: 26px; }
     .icon-add { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); display: flex; justify-content: center; align-items: center; color: #fff; font-size: 28px; }
     .app-label { color: #fff; font-size: 11px; margin-top: 6px; text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
     .page-dots { display: flex; justify-content: center; gap: 7px; padding-bottom: 16px; }
@@ -25,15 +26,24 @@
     .dot.active { background: #fff; }
     .dock-container { padding: 0 12px 20px 12px; }
     .dock { background: rgba(255,255,255,0.24); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); border-radius: 34px; height: 92px; display: flex; justify-content: space-around; align-items: center; padding: 0 16px; }
-    .home-bar { position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%); width: 136px; height: 5px; background: #fff; border-radius: 10px; opacity: 0.9; }
+    .home-bar { position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%); width: 136px; height: 5px; background: #fff; border-radius: 10px; opacity: 0.9; z-index: 30; cursor: pointer; }
     .jiggling { animation: wobble 0.25s infinite alternate; }
     @keyframes wobble { 0% { transform: rotate(-1.5deg); } 100% { transform: rotate(1.5deg); } }
     .delete-badge { display: none; position: absolute; top: -5px; left: -5px; width: 20px; height: 20px; background: #4a4a4a; color: #fff; border-radius: 50%; font-size: 14px; font-weight: 700; justify-content: center; align-items: center; z-index: 10; }
     .jiggling .delete-badge { display: flex; }
+    .app-window-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 20; transform: scale(0); opacity: 0; transition: transform 0.38s cubic-bezier(0.25,1,0.5,1), opacity 0.25s ease; border-radius: 54px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; }
+    .app-window-overlay.open { transform: scale(1); opacity: 1; }
+    
+    /* Wallpaper Customization Panel Slide-Up Panel */
+    .settings-panel { position: absolute; bottom: 0; left: 0; width: 100%; height: 260px; background: rgba(255,255,255,0.15); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-top: 1px solid rgba(255,255,255,0.2); border-radius: 30px 30px 0 0; z-index: 25; transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1); padding: 20px; color: #fff; }
+    .settings-panel.open { transform: translateY(0); }
+    .wallpaper-grid { display: flex; gap: 12px; margin-top: 15px; overflow-x: auto; padding-bottom: 10px; }
+    .wallpaper-thumb { width: 75px; height: 130px; border-radius: 12px; border: 2px solid transparent; cursor: pointer; flex-shrink: 0; background-size: cover; background-position: center; }
+    .wallpaper-thumb.active { border-color: #007aff; }
   </style>
 </head>
 <body>
-  <div class="iphone-screen">
+  <div class="iphone-screen" id="main-screen">
     <div class="status-bar"><span id="live-clock">9:41</span><div>📶 5G 🔋</div></div>
     <div class="screen-slider-viewport" id="swipe-viewport">
       <div class="pages-container" id="pages-canvas">
@@ -57,9 +67,33 @@
       </div>
     </div>
     <div class="page-dots"><div class="dot active" id="dot-0"></div><div class="dot" id="dot-1"></div></div>
-    <div class="dock-container"><div class="dock"><div class="app-icon icon-safari"></div><div class="app-icon icon-appstore"></div><div class="app-icon" style="background: #5ac8fa"></div><div class="app-icon" style="background: #ffcc00"></div></div></div>
-    <div class="home-bar"></div>
+    
+    <div class="dock-container">
+      <div class="dock">
+        <div class="app-icon icon-safari"></div>
+        <div class="app-icon icon-appstore"></div>
+        <div class="app-icon" style="background: #5ac8fa"></div>
+        <div class="app-icon icon-settings" onclick="openSettings()">⚙️</div>
+      </div>
+    </div>
+    
+    <div class="home-bar" onclick="closeAllPanels()"></div>
+    
+    <div id="app-window" class="app-window-overlay">
+      <div style="text-align: center;"><div style="font-size: 24px; font-weight: 600;" id="window-app-name">Application</div><div style="font-size: 14px; color: rgba(255,255,255,0.6);">LiveContainer Engine</div></div>
+    </div>
+
+    <!-- Slide-Up Settings Panel -->
+    <div id="settings-panel" class="settings-panel">
+      <h3 style="font-weight: 600; font-size: 17px;">Choose Wallpaper</h3>
+      <div class="wallpaper-grid">
+        <div class="wallpaper-thumb active" style="background-image: url('https://unsplash.com')" onclick="changeWallpaper('https://unsplash.com', this)"></div>
+        <div class="wallpaper-thumb" style="background-image: url('https://unsplash.com')" onclick="changeWallpaper('https://unsplash.com', this)"></div>
+        <div class="wallpaper-thumb" style="background-image: url('https://unsplash.com')" onclick="changeWallpaper('https://unsplash.com', this)"></div>
+      </div>
+    </div>
   </div>
+
   <div id="install-modal" style="display: none; position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); z-index:100; justify-content:center; align-items:center;">
     <div style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); width: 280px; padding: 20px; border-radius: 20px; text-align: center; color: #fff;">
       <h3 style="margin-bottom: 10px;">Install App</h3>
