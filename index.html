@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Custom OS Launcher</title>
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background-color: #0f0f11;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .iphone-screen {
+      width: 393px; 
+      height: 852px; 
+      background: url('https://unsplash.com') no-repeat center center;
+      background-size: cover;
+      border-radius: 54px;
+      position: relative;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .iphone-screen::before {
+      content: '';
+      position: absolute;
+      top: 11px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 30px;
+      background-color: #000000;
+      border-radius: 20px;
+      z-index: 10;
+    }
+    .status-bar {
+      height: 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding: 0 34px 6px 34px;
+      color: #ffffff;
+      font-weight: 500;
+      font-size: 15px;
+      z-index: 5;
+    }
+    .screen-slider-viewport {
+      width: 100%;
+      flex-grow: 1;
+      overflow: hidden;
+      position: relative;
+    }
+    .pages-container {
+      display: flex;
+      width: 200%; 
+      height: 100%;
+      transition: transform 0.3s ease-out;
+    }
+    .app-page {
+      width: 393px; 
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: min-content;
+      column-gap: 18px;
+      row-gap: 28px;
+      padding: 36px 26px 10px 26px;
+    }
+    .app-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+    .app-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.22);
+      background: #ffffff;
+    }
+    .icon-add {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 28px;
+    }
+    .app-label {
+      color: #ffffff;
+      font-size: 11px;
+      margin-top: 6px;
+      text-align: center;
+    }
+    .page-dots {
+      display: flex;
+      justify-content: center;
+      gap: 7px;
+      padding-bottom: 16px;
+    }
+    .dot {
+      width: 7px;
+      height: 7px;
+      background-color: rgba(255, 255, 255, 0.35);
+      border-radius: 50%;
+    }
+    .dot.active {
+      background-color: #ffffff;
+    }
+    .dock-container {
+      padding: 0 12px 20px 12px;
+    }
+    .dock {
+      background: rgba(255, 255, 255, 0.24);
+      backdrop-filter: blur(35px);
+      -webkit-backdrop-filter: blur(35px);
+      border-radius: 34px;
+      height: 92px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 16px;
+    }
+    .dock .app-icon {
+      background: #ffffff;
+    }
+    .home-bar {
+      position: absolute;
+      bottom: 9px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 136px;
+      height: 5px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="iphone-screen">
+    <div class="status-bar">
+      <span class="time" id="live-clock">9:41</span>
+      <div class="status-icons">📶 5G 🔋</div>
+    </div>
+
+    <div class="screen-slider-viewport" id="swipe-viewport">
+      <div class="pages-container" id="pages-canvas">
+        
+        <!-- SCREEN ONE -->
+        <div class="app-page">
+          <div class="app-item" onclick="addNewApp()">
+            <div class="app-icon icon-add">+</div>
+            <span class="app-label">Install IPA</span>
+          </div>
+        </div>
+
+        <!-- SCREEN TWO -->
+        <div class="app-page">
+          <!-- Left blank for sliding space -->
+        </div>
+
+      </div>
+    </div>
+
+    <div class="page-dots">
+      <div class="dot active" id="dot-0"></div>
+      <div class="dot" id="dot-1"></div>
+    </div>
+
+    <div class="dock-container">
+      <div class="dock">
+        <div class="app-icon" style="background: #2ecc71;"></div>
+        <div class="app-icon" style="background: #3498db;"></div>
+        <div class="app-icon" style="background: #9b59b6;"></div>
+        <div class="app-icon" style="background: #95a5a6;"></div>
+      </div>
+    </div>
+
+    <div class="home-bar"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
