@@ -1,9 +1,9 @@
 {
-  "appId": "com.yourname.customlauncher",
-  "appName": "Sepos",
-  "webDir": ".",
+  "appId": "com.jajko3714hash.customlauncher",
+  "appName": "CustomOS",
+  "webDir": "dist",
   "server": {
-    "url": "https://github.io",
+    "url": "https://" + "jajko3714-hash" + ".github.io" + "/ios-launcher/" + "index.html",
     "allowNavigation": ["*"]
   }
 }
